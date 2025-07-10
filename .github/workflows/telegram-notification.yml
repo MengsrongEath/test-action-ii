@@ -1,0 +1,72 @@
+name: Telegram Forum Notifications (Appleboy)
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  issues:
+    types: [opened, closed]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Send Telegram notification for Push
+      if: github.event_name == 'push'
+      uses: appleboy/telegram-action@master
+      with:
+        to: ${{ secrets.TELEGRAM_CHAT_ID }}
+        token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        message_thread_id: ${{ secrets.TELEGRAM_THREAD_ID }}
+        message: |
+          🚀 *New Push to Repository*
+          
+          *Repository:* ${{ github.repository }}
+          *Branch:* ${{ github.ref_name }}
+          *Commit:* ${{ github.event.head_commit.message }}
+          *Author:* ${{ github.event.head_commit.author.name }}
+          *Commit SHA:* `${{ github.sha }}`
+          
+          [View Commit](https://github.com/${{ github.repository }}/commit/${{ github.sha }})
+        format: markdown
+        
+    - name: Send Telegram notification for PR
+      if: github.event_name == 'pull_request'
+      uses: appleboy/telegram-action@master
+      with:
+        to: ${{ secrets.TELEGRAM_CHAT_ID }}
+        token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        message_thread_id: ${{ secrets.TELEGRAM_THREAD_ID }}
+        message: |
+          📋 *Pull Request ${{ github.event.action }}*
+          
+          *Repository:* ${{ github.repository }}
+          *PR Title:* ${{ github.event.pull_request.title }}
+          *Author:* ${{ github.event.pull_request.user.login }}
+          *Branch:* ${{ github.event.pull_request.head.ref }} → ${{ github.event.pull_request.base.ref }}
+          
+          [View PR](https://github.com/${{ github.repository }}/pull/${{ github.event.pull_request.number }})
+        format: markdown
+        
+    - name: Send Telegram notification for Issues
+      if: github.event_name == 'issues'
+      uses: appleboy/telegram-action@master
+      with:
+        to: ${{ secrets.TELEGRAM_CHAT_ID }}
+        token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        message_thread_id: ${{ secrets.TELEGRAM_THREAD_ID }}
+        message: |
+          🐛 *Issue ${{ github.event.action }}*
+          
+          *Repository:* ${{ github.repository }}
+          *Issue Title:* ${{ github.event.issue.title }}
+          *Author:* ${{ github.event.issue.user.login }}
+          *Issue Number:* #${{ github.event.issue.number }}
+          
+          [View Issue](https://github.com/${{ github.repository }}/issues/${{ github.event.issue.number }})
+        format: markdown
