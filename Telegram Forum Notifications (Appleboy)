@@ -1,5 +1,4 @@
-name: Telegram Forum Notifications (Appleboy)
-
+name: Telegram Forum Notifications (Updated)
 on:
   push:
     branches: [ main, master ]
@@ -7,7 +6,6 @@ on:
     branches: [ main, master ]
   issues:
     types: [opened, closed]
-
 jobs:
   notify:
     runs-on: ubuntu-latest
@@ -18,7 +16,7 @@ jobs:
       
     - name: Send Telegram notification for Push
       if: github.event_name == 'push'
-      uses: appleboy/telegram-action@master
+      uses: appleboy/telegram-action@v1.1.0
       with:
         to: ${{ secrets.TELEGRAM_CHAT_ID }}
         token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
@@ -37,7 +35,7 @@ jobs:
         
     - name: Send Telegram notification for PR
       if: github.event_name == 'pull_request'
-      uses: appleboy/telegram-action@master
+      uses: appleboy/telegram-action@v1.1.0
       with:
         to: ${{ secrets.TELEGRAM_CHAT_ID }}
         token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
@@ -55,7 +53,7 @@ jobs:
         
     - name: Send Telegram notification for Issues
       if: github.event_name == 'issues'
-      uses: appleboy/telegram-action@master
+      uses: appleboy/telegram-action@v1.1.0
       with:
         to: ${{ secrets.TELEGRAM_CHAT_ID }}
         token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
